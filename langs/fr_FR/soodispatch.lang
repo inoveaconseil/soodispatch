@@ -1,0 +1,6 @@
+# Dolibarr language file - fr_FR - crm
+CHARSET=UTF-8
+
+Module432400Name=Soodispatch Import
+Module432400Desc = Importation des interventions soodispatch en facture fournisseur
+CreateImport = Import autorisé
