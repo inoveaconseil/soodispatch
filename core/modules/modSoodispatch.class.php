@@ -25,7 +25,7 @@
  * 	\brief		Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
-
+include_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 /**
  * Description and activation class for module MyModule
  */
@@ -60,7 +60,7 @@ class modSoodispatch extends DolibarrModules {
         // (where XXX is value of numeric property 'numero' of module)
         $this->description = "Module432400Desc";
         // Possible values for version are: 'development', 'experimental' or version
-        $this->version = '1.1';
+        $this->version = '1.0';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -68,6 +68,8 @@ class modSoodispatch extends DolibarrModules {
         // (0=common,1=interface,2=others,3=very specific)
         $this->editor_name = 'Inovea Conseil';
         $this->editor_url = 'https://www.inovea-conseil.com';
+        $this->url_last_version = "https://www.dolibiz.com/wp-content/uploads/lastversion/last_version-soodispatch.txt";
+
         $this->special = 0;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png
@@ -92,13 +94,13 @@ class modSoodispatch extends DolibarrModules {
             //'barcode' => 0,
             // Set this to 1 if module has its own models directory
             'models' => 0,
-                // Set this to relative path of css if module has its own css file
-                // 'css' => '/simplification/css/mycss.css.php',
-                //'js' => '/simplification/js/simplification.js.php',
-                // Set here all hooks context managed by module
-                //'hooks' => array('invoicecard','actioncard')
-                // Set here all workflow context managed by module
-                //'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
+            // Set this to relative path of css if module has its own css file
+            // 'css' => '/simplification/css/mycss.css.php',
+            //'js' => '/simplification/js/simplification.js.php',
+            // Set here all hooks context managed by module
+            //'hooks' => array('invoicecard','actioncard')
+            // Set here all workflow context managed by module
+            //'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
         );
 
         // Data directories to create when module is enabled.
@@ -177,7 +179,7 @@ class modSoodispatch extends DolibarrModules {
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
-                
+
 
         $r = 0;
 
@@ -189,11 +191,11 @@ class modSoodispatch extends DolibarrModules {
         // Example to declare a Left Menu entry into an existing Top menu entry:
         $this->menu[$r] = array(
             //	// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
-            'fk_menu' => 'fk_mainmenu=accountancy',
+            'fk_menu' => 'fk_mainmenu=billing',
             //	// This is a Left menu entry
             //	'type'=>'left',
-            'titre' => 'Soodispatch',
-            'mainmenu' => 'accountancy',
+            'titre' => 'soodispatch',
+            'mainmenu' => 'billing',
             'leftmenu' => 'soodispatch',
             'url' => '/soodispatch/index.php?action=list',
             //	// Lang file to use (without .lang) by module.
@@ -204,12 +206,12 @@ class modSoodispatch extends DolibarrModules {
             //	// Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
             //	// Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled' => '$user->rights->soodispatch->read',
-                //	// Use 'perms'=>'$user->rights->mymodule->level1->level2'
-                //	// if you want your menu with a permission rules
-                	'perms'=>'1',
-                //	'target'=>'',
-                //	// 0=Menu for internal users, 1=external users, 2=both
-                	'user'=>2
+            //	// Use 'perms'=>'$user->rights->mymodule->level1->level2'
+            //	// if you want your menu with a permission rules
+            'perms'=>'1',
+            //	'target'=>'',
+            //	// 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
         );
         $r++;
         $r = 1;
@@ -226,8 +228,9 @@ class modSoodispatch extends DolibarrModules {
      */
     public function init($options = '') {
 
+        global $langs;
         //$result = $this->loadTables();
-
+        dolibarr_set_const($this->db, "CHECKLASTVERSION_EXTERNALMODULE", '1', 'int', 0, '', $conf->entity);
 
         return $this->_init($sql, $options);
     }

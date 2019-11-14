@@ -69,11 +69,9 @@ echo '<table border="1">';
 $i = 0;
 foreach($sheet->getRowIterator() as $valline => $row) {
     if($i == 0) {$i=1;continue;}
-    if($sheet->getCell("A".$valline)->getFormattedValue() == "Somme" || $sheet->getCell("A".$valline)->getFormattedValue() == "Compteur" || $sheet->getCell("A".$valline)->getFormattedValue() == "Moyenne" )
-            continue;
-    if($sheet->getCell("G".$valline)->getFormattedValue() !=1) continue;
-    $namesup = $sheet->getCell("F".$valline)->getFormattedValue();
-    $supplier = $this->getSupplierByAliasNine($namesup);
+
+    $namesup = $sheet->getCell("C".$valline)->getFormattedValue();
+    $supplier = $this->getSupplierByName($namesup);
     $idsupplier = $supplier->rowid;
     
     if(!is_object($supplier)){ 
@@ -82,28 +80,28 @@ foreach($sheet->getRowIterator() as $valline => $row) {
         if(is_object($supplier)){
             $upsup = new Societe($this->db);
             $upsup->fetch($idsupplier);
-            $upsup->name_alias = '9'.$namesup;
+            $upsup->name_alias = $namesup;
             $upsup->update($idsupplier,$user);
         }
     }
     if(!is_object($supplier)){
-        $newsup = new Societe($this->db);
-        $newsup->nom = $namesup;
-        $newsup->name = $namesup;
-        $newsup->name_alias = '9'.$namesup;
-        $newsup->fournisseur = 1;
-        $newsup->client = 0;
-        $newsup->tva_assuj = 0;
-        $newsup->entity = $conf->global->entity;
-        $newsup->country_id = 1;
-        $idsupplier = $newsup->create($user);//tva_assuj
+        $supplier = new Societe($this->db);
+        $supplier->nom = $namesup;
+        $supplier->name = $namesup;
+        $supplier->name_alias = '9'.$namesup;
+        $supplier->fournisseur = 1;
+        $supplier->client = 0;
+        $supplier->tva_assuj = 1;
+        $supplier->entity = $conf->global->entity;
+        $supplier->country_id = 1;
+        $idsupplier = $supplier->create($user);//tva_assuj
     }
     
     if($supplier->tva_assuj==1) {$tva = 20;} else {$tva=0;}
-    $suppliersf[$idsupplier][] = array('designation' => $sheet->getCell("H".$valline)->getFormattedValue().' - '.$sheet->getCell("B".$valline)->getFormattedValue().' - '.$sheet->getCell("D".$valline)->getFormattedValue(). '<br />'.$sheet->getCell("R".$valline)->getFormattedValue().' '.$sheet->getCell("S".$valline)->getFormattedValue(). ' '.$sheet->getCell("T".$valline)->getFormattedValue(),
-                                    'price' => $sheet->getCell("P".$valline)->getFormattedValue()+$sheet->getCell("Q".$valline)->getFormattedValue(),
+    $suppliersf[$idsupplier][] = array('designation' => "Prestation de service",
+                                    'price' => $sheet->getCell("D".$valline)->getFormattedValue(),
                                     'tva' => $tva,
-                                    'date' => $sheet->getCell("H".$valline)->getFormattedValue());
+                                    'date' => $sheet->getCell("A".$valline)->getFormattedValue());
     
     
    echo '<tr>';
@@ -130,7 +128,7 @@ echo '</table>';
             foreach($lines as $key => $line){
            // echo "<pre>".print_r($line,1)."</pre>";
 
-                $invoice->lines[$key] = new SupplierInvoiceLine($db);
+                $invoice->lines[$key] = new SupplierInvoiceLine($this->db);
                 $invoice->lines[$key]->description = $line['designation'];
                 $invoice->lines[$key]->tva_tx = $line['tva'];
                 $invoice->lines[$key]->qty = 1;
@@ -162,14 +160,20 @@ echo '</table>';
     public function getSupplierByAlias($alias){
         $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'societe WHERE name_alias="'.$alias.'" LIMIT 1';
         $resql=$this->db->query($sql);
-        $obj = $this->db->fetch_object($resql);
+        if($this->db->num_rows($resql) > 0)
+            $obj = $this->db->fetch_object($resql);
+        else
+            $obj = "";
         return $obj;
     }
     
-        public function getSupplierByAliasNine($alias){
-        $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'societe WHERE name_alias="9'.$alias.'" LIMIT 1';
+        public function getSupplierByName($alias){
+        $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'societe WHERE name="'.$alias.'" LIMIT 1';
         $resql=$this->db->query($sql);
-        $obj = $this->db->fetch_object($resql);
+            if($this->db->num_rows($resql) > 0)
+                $obj = $this->db->fetch_object($resql);
+            else
+                $obj = "";
         return $obj;
     }
 }
