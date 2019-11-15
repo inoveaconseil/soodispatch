@@ -194,9 +194,9 @@ class modSoodispatch extends DolibarrModules {
             'fk_menu' => 'fk_mainmenu=billing',
             //	// This is a Left menu entry
             //	'type'=>'left',
-            'titre' => 'soodispatch',
+            'titre' => 'Import factures fournisseurs',
             'mainmenu' => 'billing',
-            'leftmenu' => 'soodispatch',
+            'leftmenu' => 'Import',
             'url' => '/soodispatch/index.php?action=list',
             //	// Lang file to use (without .lang) by module.
             //	// File must be in langs/code_CODE/ directory.

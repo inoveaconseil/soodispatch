@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - crm
 CHARSET=UTF-8
 
-Module432400Name=Soodispatch Import
-Module432400Desc = Import of interventions from Soodispatch to supplier invoices in Dolibarr
-CreateImport = Import authorized
+Module432400Name=Supplier's invoices import
+Module432400Desc = Import of supplier invoices in Dolibarr from a excel file
+CreateImport = Create an Import
+Soodispatch= Invoices Import
+Problem=A problem happend during the import
