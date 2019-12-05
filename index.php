@@ -122,7 +122,7 @@ $permtoedit = $user->rights->fournisseur->facture->creer;
 $param = '&id=' . 1;
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"],
+    $_SERVER["PHP_SELF"]."?action=go",
     '',
     0,
     0,
@@ -133,7 +133,6 @@ $formfile->form_attach_new_file(
     1,
     $savingdocmask,0,'soodispatch'
 );
-
 // List of document
 $formfile->list_of_documents(
     $filearray,

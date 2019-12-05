@@ -72,8 +72,14 @@ class Soodispatch extends CommonObject
             $i = 0;
             foreach($sheet->getRowIterator() as $valline => $row) {
                 if($i == 0) {$i=1;continue;}
+                if($i == 1) {
+                    $datef = $sheet->getCell("A" . $valline)->getFormattedValue();
+                    $dd = explode('/', $datef);
+                    $dateff = $this->db->jdate($dd[2] .'-'. $dd[0].'-'. $dd[1]);
+                }
+                $namesup = $sheet->getCell("C".$valline)->getValue();
+                if(empty($namesup)) {$i++; continue;}
 
-                $namesup = $sheet->getCell("C".$valline)->getFormattedValue();
                 $supplier = $this->getSupplierByName($namesup);
                 $idsupplier = $supplier->rowid;
 
@@ -100,11 +106,14 @@ class Soodispatch extends CommonObject
                     $idsupplier = $supplier->create($user);//tva_assuj
                 }
 
+
                 if($supplier->tva_assuj==1) {$tva = 20;} else {$tva=0;}
                 $suppliersf[$idsupplier][] = array('designation' => "Prestation de service",
                     'price' => $sheet->getCell("D".$valline)->getFormattedValue(),
                     'tva' => $tva,
-                    'date' => $sheet->getCell("A".$valline)->getFormattedValue());
+                    'date' => $sheet->getCell("A".$valline)->getFormattedValue(),
+                    'datec' => $dateff
+            );
 
 
                 echo '<tr>';
@@ -120,11 +129,12 @@ class Soodispatch extends CommonObject
             }
             echo '</table>';
         }
+
         foreach($suppliersf as $idsup => $lines){
 
             $invoice = new FactureFournisseur($this->db);
             $invoice->socid = $idsup;
-            $invoice->date = dol_now();
+            $invoice->date = $lines[0]['datec'];
             $invoice->amount = 0;
             $invoice->mode_reglement_id = 2;
             foreach($lines as $key => $line){
