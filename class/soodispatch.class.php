@@ -112,7 +112,8 @@ class Soodispatch extends CommonObject
                     'price' => $sheet->getCell("D".$valline)->getFormattedValue(),
                     'tva' => $tva,
                     'date' => $sheet->getCell("A".$valline)->getFormattedValue(),
-                    'datec' => $dateff
+                    'datec' => $dateff,
+                    'reff' => $sheet->getCell("B".$valline)->getValue()
             );
 
 
@@ -137,9 +138,8 @@ class Soodispatch extends CommonObject
             $invoice->date = $lines[0]['datec'];
             $invoice->amount = 0;
             $invoice->mode_reglement_id = 2;
+            $invoice->ref_supplier = $lines[0]['reff'];
             foreach($lines as $key => $line){
-                // echo "<pre>".print_r($line,1)."</pre>";
-
                 $invoice->lines[$key] = new SupplierInvoiceLine($this->db);
                 $invoice->lines[$key]->description = $line['designation'];
                 $invoice->lines[$key]->tva_tx = $line['tva'];
@@ -151,8 +151,8 @@ class Soodispatch extends CommonObject
                 $invoice->lines[$key]->pu_ttc = $line['price'] + ($line['price'] * $line['tva']/100);
                 $invoice->lines[$key]->product_type = 1;
                 if($key == 0){
-                    $d = explode('/', $line['date']);
-                    $invoice->ref_supplier = $d[1].'/'.$d[2];
+                    //$d = explode('/', $line['date']);
+
                 }
             }
             //  echo "<pre>".print_r($invoice,1)."</pre>";
